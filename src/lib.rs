@@ -25,9 +25,10 @@ impl MyClient {
     }
 
 
-    pub fn post_req(self,url : &str) -> Result<reqwest::blocking::Response, Box<dyn std::error::Error>>{
+    pub fn post_req(self,url : &str,json:&str) -> Result<reqwest::blocking::Response, Box<dyn std::error::Error>>{
         let res = self.client.post(url)
-        .body("helo world")
+        .header(reqwest::header::CONTENT_TYPE, "application/json")
+        .json(&json)
         .send()?;
         Ok(res)
     }

@@ -20,9 +20,9 @@ impl Args{
             return Err(String::from("Few arguments"));
         }
 
-        if args.len() > 5 {
+        /*if args.len() > 6 {
             return Err(String::from("too many arguments"));
-        }
+        }*/
 
         tokens.insert("method".to_string(),args[1].clone());
         tokens.insert("url".to_string(),args[2].clone());
