@@ -4,7 +4,7 @@
 
 ### examples
 #### get 
-`cargo run get https://api.github.com/users/defunkt`
+`cargo run get https://api.github.com/users/t-el`
 ```
 -----------------------------------------------
 "server": "GitHub.com"
