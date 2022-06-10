@@ -23,6 +23,7 @@ impl MyClient {
         let  res = self.client.get(url).send()?;
         Ok(res)
     }
+    
 
 
     pub fn post_req(self,url : &str,json:&str) -> Result<reqwest::blocking::Response, Box<dyn std::error::Error>>{
@@ -32,4 +33,22 @@ impl MyClient {
         .send()?;
         Ok(res)
     }
+
+    pub fn put_req(self,url : &str,json:&str) -> Result<reqwest::blocking::Response, Box<dyn std::error::Error>>{
+        let res = self.client.put(url)
+        .header(reqwest::header::CONTENT_TYPE, "application/json")
+        .json(&json)
+        .send()?;
+        Ok(res)
+    }
+
+    pub fn delete_req(self,url : &str,json:&str) -> Result<reqwest::blocking::Response, Box<dyn std::error::Error>>{
+        let res = self.client.delete(url)
+        .header(reqwest::header::CONTENT_TYPE, "application/json")
+        .json(&json)
+        .send()?;
+        Ok(res)
+    }
+
+
 }
