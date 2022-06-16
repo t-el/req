@@ -56,7 +56,7 @@ impl CmdRequestBuilder {
     pub fn build(&self) -> RequestBuilder {
      let builder = reqwest::Client::new().request(self.get_method(), self.args.url.as_str());
       // add headers
-        let header_map = get_headers(*self.args.headers.as_ref().unwrap());
+        let header_map = get_headers(self.args.headers.unwrap());
     
 
 
