@@ -1,96 +1,88 @@
-use std::env;
-use req::MyClient;
+use clap::Parser;
+use std::collections::HashMap;
 
-#[derive(Debug)]
-pub enum  CommandType {
-    Get,
-    Post,
-    Put,
-    Delete,
+
+/// Rest API tester just in your terminal. happy testing! :)
+#[derive(Parser, Debug)]
+#[clap(author, version, about, long_about = None)]
+pub struct Args {
+    /// Method to use for the request (get, post, put, delete) (default: get)
+    #[clap(short='M', long , default_value = "get")]
+    pub method: String,
+
+    /// url to use for the request (required) (e.g. http://www.google.com)
+    #[clap(short ='U', long)]
+    pub url: String,
+
+     /// query string to send to the server (optional) , example : req --method get --url http://localhost:8080/  --query '?name=John'
+     #[clap(short ='Q', long ,multiple = true)]
+     pub query: Option<Vec<String>>,
+     
+
+    /// body to send to the server (for POST and PUT) (optional) (multiple) , example : req --method post --url http://localhost:8080/  --body '{"name":"John"}' 
+    #[clap(short='B', long ,multiple = true)]
+    pub body: Option<Vec<String>>,
+
+
+    /// headers to send to the server (optional)(multiple) , example : req --method post --url http://localhost:8080/  --headers '{"Content-Type":"application/json"}'
+    #[clap(short = 'H', long ,multiple = true)]
+    pub headers: Option<Vec<String>>,
+
+    /// include the headers in the output (default: false)
+    #[clap(long="IH")]
+    pub include_headers: bool,
+
+    /// include the body in the output (default: false) , (if the body is too large, it will be truncated)
+    #[clap(long ="IB" )]
+    pub include_body: bool,
+
+    /// include the status code and status message  in the output (default: true)
+    #[clap(long="IS", default_value = "0")]
+    pub status: i8,
+
 }
 
-impl  CommandType {
-   pub fn from_str(command_type: &str) -> Result<Self, &'static str> {
-         match command_type {
-              "get" => Ok(CommandType::Get),
-              "post" => Ok(CommandType::Post),
-              "put" => Ok(CommandType::Put),
-              "delete" => Ok(CommandType::Delete),
-              _ => Err("Unknown command type")
-         }
+impl Args {
+    pub fn parse_cmd() -> Self {
+        Args::parse()
     }
-}
+
+    pub fn get_method(&self) -> &str {
+        &self.method
+    }
+
+    pub fn get_url(&self) -> &str {
+        &self.url
+    }
+
+    pub fn get_query(&self) -> Option<&Vec<String>> {
+        self.query.as_ref()
+    }
+
+    pub fn get_body(&self) -> Option<&Vec<String>> {
+        self.body.as_ref()
+    }
+
+    pub fn get_headers(&self) -> Option<&Vec<String>> {
+        self.headers.as_ref()
+    }
+  
     
-
-
-#[derive(Debug)]
-pub struct Command {
-    pub command : CommandType,
-    pub target_url : String,
-}
-
-
-// implementation
-impl Command {
-
-    pub fn new(command : CommandType, target_url : String) -> Self {
-        Command {
-            command,
-            target_url,
-        }
-    }
-
-    
-
-    pub fn get_target_url(&self) -> String {
-        self.target_url.clone()
-    }
-    
- 
-    pub fn get_command_string(&self) -> String {
-        match self.command {
-            CommandType::Get => "get",
-            CommandType::Post => "post",
-            CommandType::Put => "put",
-            CommandType::Delete => "delete",
-        }
-        .to_string()
-    }
-
-    pub fn get_command_string_with_url(&self) -> String {
-        format!("{} {}", self.get_command_string(), self.get_target_url())
-    }
-
-    pub fn execute(&self, body: &str) {
-      // if body is empty, then it is a get request
-      // if body is not empty, then it is a post request with a body to be sent
-      // if body is not empty, then it is a put request with a body to be sent
-      // if body is not empty, then it is a delete request with a body to be sent
-
-        let client = MyClient::new();
-        let url = self.get_target_url();
       
+    
+   
+    
         
-        let res = match self.command {
-            CommandType::Get => client.get_req(&url),
-            CommandType::Post => client.post_req(&url, body),
-            CommandType::Put => client.put_req(&url, body),
-            CommandType::Delete => client.delete_req(&url, body),
-
-           
-        };
-        match res {
-            Ok(res) => {
-                println!("{}", res.text().unwrap());
-            }
-            Err(e) => {
-                println!("{}", e);
-            }
-        }
-
-
+    pub fn include_headers(&self) -> bool {
+        self.include_headers == true
     }
 
+    pub fn include_body(&self) -> bool {
+        self.include_body == false
+    }
+
+    pub fn include_status(&self) -> bool {
+        self.status == 1
+    }
 
 }
-
